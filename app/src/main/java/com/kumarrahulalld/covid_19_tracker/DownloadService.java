@@ -3,7 +3,6 @@ package com.kumarrahulalld.covid_19_tracker;
 import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.io.IOException;
@@ -12,6 +11,7 @@ import java.util.Iterator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class DownloadService extends IntentService {
     public DownloadService() {
@@ -24,13 +24,13 @@ public class DownloadService extends IntentService {
 
     /* access modifiers changed from: protected */
     public void onHandleIntent(Intent intent) {
-        String str = BuildConfig.FLAVOR;
+        String str=BuildConfig.FLAVOR;
         String con = intent.getStringExtra("country");
         ArrayList<String> res = new ArrayList<>();
         try {
             Document document = Jsoup.connect("https://www.worldometers.info/coronavirus/#countries").get();
-            String head = str;
             String str2 = "@";
+            String head = "";
             String str3 = "Country, Other";
             String str4 = "tr";
             if (con.equals("All Countries")) {
@@ -40,7 +40,7 @@ public class DownloadService extends IntentService {
                     String head2 = str;
                     int j = 0;
                     while (true) {
-                        if (j >= 11) {
+                        if (j >= 10) {
                             break;
                         } else if (e.child(j).text().equals(str3)) {
                             break;
@@ -63,7 +63,7 @@ public class DownloadService extends IntentService {
                     if (e2.child(0).text().equals(con)) {
                         int j2 = 0;
                         while (true) {
-                            if (j2 >= 11) {
+                            if (j2 >= 10) {
                                 break;
                             } else if (e2.child(j2).text().equals(str3)) {
                                 break;
@@ -81,7 +81,7 @@ public class DownloadService extends IntentService {
                 }
                 res.add(head);
             }
-        } catch (IOException e3) {
+        }catch (Exception e3) {
             Log.d("Exception Covid-9", e3.getStackTrace().toString());
         }
         intent.setAction("Get");
