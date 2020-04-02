@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("Get");
         LocalBroadcastManager.getInstance(this).registerReceiver(this.myReceiver, intentFilter);
-        Intent intent = new Intent(this, DownloadService.class);
+        Intent intent = new Intent(this, com.kumarrahulalld.covid_19_tracker.DownloadService.class);
         intent.putExtra("country", con.getSelectedItem().toString());
         startService(intent);
     }
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         int done = 0;
         String[] strArr = new String[1];
         Collections.sort(e);
-        e.add(0, "Conutry, Other@Total Cases@New Cases@Total Deaths@New Deaths@Total Recovered@Active Cases@Serious , Critical@Total Cases Per Million Population@Total Deaths Per Million Population@ First Case Reported On");
+        e.add(0, "Day@Conutry, Other@Total Cases@New Cases@Total Deaths@New Deaths@Total Recovered@Active Cases@Serious , Critical@Total Cases Per Million Population@Total Deaths Per Million Population");
         TableLayout gv = (TableLayout) findViewById(R.id.content);
         gv.removeAllViewsInLayout();
         int i = 0;
@@ -95,27 +95,60 @@ public class MainActivity extends AppCompatActivity {
             if (i >= e.size()) {
                 break;
             }
-            TableRow tr = new TableRow(this);
-            tr.setBackgroundResource(R.drawable.row_border);
-            TextView[] a = new TextView[1000];
-            String[] val = ((String) e.get(i)).split(str2);
-            for (int j = 0; j < val.length; j++) {
-                if (val[0].equals("Total:")) {
-                    done = i;
-                } else {
-                    a[j] = new TextView(this);
-                    a[j].setBackgroundResource(R.drawable.row_border);
-                    if (val[j].isEmpty()) {
-                        val[j] = str;
+            if (!(e.get(i).isEmpty())) {
+                if (i != 0) {
+                    if(e.size()<5) {
+                        if (i % 2 == 0) {
+                            String e1 = "Yesterday@";
+                            e1 += e.get(i);
+                            e.set(i, e1);
+                        } else {
+                            String e1 = "Today@";
+                            e1 += e.get(i);
+                            e.set(i, e1);
+                        }
                     }
-                    a[j].setText(val[j]);
-                    a[j].setPadding(10, 10, 10, 10);
-                    tr.addView(a[j]);
+                    else
+                    {
+                        if (i % 2 != 0) {
+                            String e1 = "Yesterday@";
+                            e1 += e.get(i);
+                            e.set(i, e1);
+                        } else {
+                            String e1 = "Today@";
+                            e1 += e.get(i);
+                            e.set(i, e1);
+                        }
+                    }
+
                 }
+                TableRow tr = new TableRow(this);
+                tr.setBackgroundResource(R.drawable.row_border);
+                TextView[] a = new TextView[1000];
+                String[] val = ((String) e.get(i)).split(str2);
+                for (int j = 0; j < val.length; j++) {
+                    if (val[0].equals("Total:")) {
+                        done = i;
+                    } else {
+                        a[j] = new TextView(this);
+                        a[j].setBackgroundResource(R.drawable.row_border);
+                        if (val[j].isEmpty()) {
+                            val[j] = str;
+                        }
+                        a[j].setText(val[j]);
+                        a[j].setPadding(10, 10, 10, 10);
+                        tr.addView(a[j]);
+                    }
+                }
+                gv.addView(tr);
+                i++;
             }
-            gv.addView(tr);
-            i++;
+            else
+            {
+                i++;
+            }
         }
+
         if (done != 0) {
             TableRow tr2 = new TableRow(this);
             tr2.setBackgroundResource(R.drawable.row_border);
